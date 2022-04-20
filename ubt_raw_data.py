@@ -11,7 +11,7 @@ import numpy as np
 from numpy import asarray as ar
 
 from peacock_uvp.apf_timestamp import decode_timestamp
-from peacock_uvp.apf04_gain import calc_gain, convert_code2dB_m, convert_code2dB, _convert_code2gain
+from peacock_uvp.apf04_gain import calc_gain, convert_code2dB_m, convert_code2dB, _convert_code2dB_trunc
 
 from convert_type import translate_key
 from date_parser import date_parse
@@ -243,10 +243,10 @@ class ubt_raw_data () :
 
 		# convert coded noise values to V
 		v_ref = 1.25
-		gain = pow(10, ((_convert_code2gain(1241)) / 20.)) # gain max
+		gain = pow(10, ((_convert_code2dB_trunc(1241)) / 20.)) # gain max
 		scalars_dict["noise_g_high"] = scalars_dict["noise_g_max"] * ((v_ref*2)/4096) / np.sqrt(n_avg) / gain
 		del scalars_dict["noise_g_max"]
 
-		gain = pow(10, ((_convert_code2gain(993)) / 20.)) # gain max - 10dB
+		gain = pow(10, ((_convert_code2dB_trunc(993)) / 20.)) # gain max - 10dB
 		scalars_dict["noise_g_low"] = scalars_dict["noise_g_mid"] * ((v_ref*2)/4096) / np.sqrt(n_avg) / gain
 		del scalars_dict["noise_g_mid"]
