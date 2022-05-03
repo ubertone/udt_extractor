@@ -128,11 +128,11 @@
       "unit": null
     },
     "emitter" : {
-      "alter_ego": null,
+      "alter_ego": ["tr_out"],
       "unit": null
     },
     "receiver" : {
-      "alter_ego": ["tr_out"],
+      "alter_ego": ["tr_in"],
       "unit": null
     }
   },

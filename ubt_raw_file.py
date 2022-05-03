@@ -27,6 +27,7 @@ class ubt_raw_file:
 		header = self.fd.read(42).decode("utf-8").split(" ")
 		self.version=header[0]
 		print("raw header : ", self.version)
+		assert (self.version == "UDT005")
 		self.board = header[1]
 		print("board : ", self.board)
 		header = header[2].split("/")

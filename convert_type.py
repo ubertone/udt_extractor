@@ -63,7 +63,7 @@ def translate_key(raw_key, _type="data"):
 	translated_key = None
 
 	# use of a json file for the translation in valid data type names for the DB
-	_transation_path =  './translation.json'
+	_transation_path =  os.path.dirname(os.path.realpath(__file__))+'/translation.json'
 	f = open(_transation_path)
 	translation_dict = json.loads(f.read())[_type]
 

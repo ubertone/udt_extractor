@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: UTF_8 -*-
 
-# Flags webui2 APF04
+# Flags APF04 and APF06
 PROFILE_TAG = 100
+PROFILE_INST_TAG = 101
 CONFIG_TAG = 200
 SETTINGS_JSON_TAG = 201
 CONST_TAG = 300

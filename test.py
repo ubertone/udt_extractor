@@ -1,9 +1,10 @@
 from datetime import datetime  # pour time count
 from raw_extract import raw_extract
 
-# Path to raw.udt file to extract (from UB-Lab P or UB-SediFlow)
-path = "./raw_test.udt"
+# Path to raw.udt file to extract (from UB-Lab P, UB-SediFlow or UB-Lab 3C)
+path = "./raw_test.udt" # "./raw_test_3C.udt"
 
+extract_start = datetime.now()
 # Extraction function:
 (
     device_name,
@@ -14,7 +15,10 @@ path = "./raw_test.udt"
     data_dicts,
     settings_dict
 ) = raw_extract(path)
-
+print(
+        "=============\nextract duration:%s\n==========="
+        % (datetime.now() - extract_start)
+    )
 print(device_name)
 print(time_begin, time_end)
 ## Extracted data are arranged in dictionnaries:
