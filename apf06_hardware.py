@@ -1,7 +1,7 @@
 from array import array
 import numpy as np
 
-from apf06_gain import calc_gain, convert_code2dB_m, convert_code2dB, APF06_CODE_MAX_APPLIED
+from .apf06_gain import calc_gain, convert_code2dB_m, convert_code2dB, APF06_CODE_MAX_APPLIED
 
 class apf06_hardware ():
     def conversion_profile(self, vectors_dict, sound_speed, n_vol, n_avg, c_prf, gain_ca0, gain_ca1, blind_ca0, blind_ca1):

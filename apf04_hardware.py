@@ -1,7 +1,7 @@
 from array import array
 import numpy as np
 
-from peacock_uvp.apf04_gain import calc_gain, convert_code2dB_m, convert_code2dB, _convert_code2dB_trunc
+from .peacock_uvp.apf04_gain import calc_gain, convert_code2dB_m, convert_code2dB, _convert_code2dB_trunc
 
 class apf04_hardware ():
     def conversion_profile(self, vectors_dict, sound_speed, n_vol, n_avg, c_prf, gain_ca0, gain_ca1, blind_ca0, blind_ca1):
