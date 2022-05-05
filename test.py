@@ -1,5 +1,5 @@
 from datetime import datetime  # pour time count
-from raw_extract import raw_extract
+from .raw_extract import raw_extract
 
 # Path to raw.udt file to extract (from UB-Lab P, UB-SediFlow or UB-Lab 3C)
 path = "./raw_test.udt" # "./raw_test_3C.udt"

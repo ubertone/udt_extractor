@@ -7,7 +7,7 @@
 
 from copy import deepcopy
 
-from convert_type import translate_paramdict
+from .convert_type import translate_paramdict
 
 def paramus_rawdict2ormdict(settings_dict):
 	"""Function that converts a settings dict read from a raw file (webui2, UB-Lab P) to a formatted dict for data processing.

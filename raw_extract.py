@@ -8,9 +8,9 @@
 import json
 from datetime import datetime  # pour time count
 
-from ubt_raw_file import ubt_raw_file
-from ubt_raw_data import ubt_raw_data
-from ubt_raw_flag import *
+from .ubt_raw_file import ubt_raw_file
+from .ubt_raw_data import ubt_raw_data
+from .ubt_raw_flag import *
 
 
 def raw_extract(_raw_file):

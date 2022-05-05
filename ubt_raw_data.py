@@ -10,11 +10,11 @@ from struct import calcsize, unpack
 import numpy as np
 from numpy import asarray as ar
 
-from peacock_uvp.apf_timestamp import decode_timestamp
+from .peacock_uvp.apf_timestamp import decode_timestamp
 
-from convert_type import translate_key
-from date_parser import date_parse
-from ubt_raw_config import paramus_rawdict2ormdict
+from .convert_type import translate_key
+from .date_parser import date_parse
+from .ubt_raw_config import paramus_rawdict2ormdict
 
 class ubt_raw_data () :
     def __init__ (self, _const):
@@ -38,10 +38,10 @@ class ubt_raw_data () :
         print("initiating ubt_raw_data for board %s" %self.board)
         assert (self.board in ["apf04", "apf06"])
         if self.board == "apf04" :
-            from apf04_hardware import apf04_hardware
+            from .apf04_hardware import apf04_hardware
             self.hardware = apf04_hardware()
         elif self.board == "apf06" :
-            from apf06_hardware import apf06_hardware
+            from .apf06_hardware import apf06_hardware
             self.hardware = apf06_hardware()
 
         self.current_config = None
