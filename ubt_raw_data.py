@@ -111,6 +111,7 @@ class ubt_raw_data () :
         # self.current_config : le numéro de la configuration utilisée (1 à 3)
         self.current_config = int(ref[0] & 0x0000000F) + 1
         # get the first channel :
+        # TODO fonctionner avec la liste entière, comme dans translator_udt001234 qui fonctionne pour la 2C
         self.current_channel = list(self.param_us_dicts[self.current_config].keys())[0]
         #print (self.param_us_dicts[self.current_config].keys())
 
@@ -217,11 +218,11 @@ class ubt_raw_data () :
 
 
         # get the first channel again:
-        self.current_channel = list(self.param_us_dicts[self.current_config].keys())[0]
+        #self.current_channel = list(self.param_us_dicts[self.current_config].keys())[0]
         
         self.hardware.conversion_us_scalar(scalars_us_dict, n_avg, r_dvol, r_vol1)
         # traduction des noms des types de données US:
-        # TODO note : commun à tous les channels
+        
         for key, value in scalars_us_dict.items():
             translated_key = translate_key(key)
             # gestion des scalaires qui sont des paramètres us variables (auto)
@@ -230,10 +231,12 @@ class ubt_raw_data () :
                 if translated_key:
                     translated_key = translated_key+"_param"
             if translated_key:
-                if translated_key not in self.data_us_dicts[self.current_config][self.current_channel].keys():
-                    self.data_us_dicts[self.current_config][self.current_channel][translated_key] = {"time":[], "data":[]}
-                self.data_us_dicts[self.current_config][self.current_channel][translated_key]["data"].append(value)
-                self.data_us_dicts[self.current_config][self.current_channel][translated_key]["time"].append(time)
+                # note : commun à tous les channels en multichannel
+                for channel in list(self.param_us_dicts[self.current_config].keys()):
+                    if translated_key not in self.data_us_dicts[self.current_config][channel].keys():
+                        self.data_us_dicts[self.current_config][channel][translated_key] = {"time":[], "data":[]}
+                    self.data_us_dicts[self.current_config][channel][translated_key]["data"].append(value)
+                    self.data_us_dicts[self.current_config][channel][translated_key]["time"].append(time)
 
         self.conversion_scalar(scalars_dict)
         # traduction des noms des types de données non US:
