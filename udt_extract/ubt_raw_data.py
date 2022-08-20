@@ -7,10 +7,11 @@
 
 #from ctypes import sizeof
 from struct import calcsize, unpack
+from string import ascii_letters
 import numpy as np
 from numpy import asarray as ar
 
-from .peacock_uvp.apf_timestamp import decode_timestamp
+from peacock_uvp.apf_timestamp import decode_timestamp
 
 from .convert_type import translate_key
 from .date_parser import date_parse
@@ -33,8 +34,9 @@ class ubt_raw_data () :
         # dict, ordonné par num_config, channel_id, de listes des dictionnaires standardisés des données US (model MeasureUs)
         self.data_us_dicts = {}
 
-                        
-        self.board = "apf"+ _const["hardware"]["board_version"].lower().split('apf')[1]
+        print (_const["hardware"]["board_version"])
+        # TODO il faut supprimer la révision 
+        self.board = "apf" + _const["hardware"]["board_version"].lower().split("apf")[-1].rstrip(ascii_letters)
         print("initiating ubt_raw_data for board %s" %self.board)
         assert (self.board in ["apf04", "apf06"])
         if self.board == "apf04" :
