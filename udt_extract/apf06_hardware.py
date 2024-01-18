@@ -20,7 +20,8 @@ class apf06_hardware ():
         self.sat = array('f')
         self.ny_jump = array('f')
 
-        fact_code2velocity = sound_speed / (c_prf * 65535.)
+        # En bistatique, on a un facteur 2 par rapport au facteur en monostatique.
+        fact_code2velocity = 2. * sound_speed / (c_prf * 65535.)
         # print("factor code to velocity %f"%fact_code2velocity)
 
         tab_gain = calc_gain(n_vol, gain_ca0, gain_ca1, gain_ca0, gain_ca1) #blind_ca0, blind_ca1)
