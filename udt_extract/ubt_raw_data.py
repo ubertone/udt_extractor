@@ -79,7 +79,7 @@ class ubt_raw_data () :
         self.blind_ca0.append(blind_ca0)
         self.blind_ca1.append(blind_ca1)
 
-    def read_line (self, size, data, _inst=False) :
+    def read_line (self, size, data, _inst=False, _iq=False) :
         """Utilise une frame pour récupérer un profil voulu (pour fichiers UDT005)
         une ligne de profil dans raw UDT005 contient: (ref&0x000007FF)<<4 or int(config_key) puis le raw profile
         le raw profile contient un header puis le profil codé
@@ -135,6 +135,7 @@ class ubt_raw_data () :
         n_avg = self.param_us_dicts[self.current_config][self.current_channel]["n_avg"]
         r_dvol = self.param_us_dicts[self.current_config][self.current_channel]['r_dcell']
         r_vol1 = self.param_us_dicts[self.current_config][self.current_channel]['r_cell1']
+        n_p    = self.param_us_dicts[self.current_config][self.current_channel]["n_p"]
         nb_rx = len(self.param_us_dicts[self.current_config])
 
         #print ("n_vol = %d ; nb_rx = %d"%(n_vol, nb_rx))
@@ -153,9 +154,17 @@ class ubt_raw_data () :
             scalars_us_dict['noise_g_max'], scalars_us_dict['noise_g_mid'] = unpack("hh", data[head_size+scalars_size:head_size+scalars_size+calcsize('hh')])
             scalars_size += calcsize('hh')
 
-        if (size - (head_size+scalars_size)) / (data_per_cell * 2) != n_vol * nb_rx:
-            raise Exception('volume number', "expected %d volumes, but profile data contains %d" % (
-                n_vol, ((size - (head_size + scalars_size)) / (data_per_cell * 2 * nb_rx))))
+        profile_size = data_per_cell*n_vol*nb_rx*calcsize('h')
+
+        if _iq:
+            pass # TODO tmp
+            #if (size - (head_size+scalars_size+profile_size) != (n_p*n_vol*nb_rx*2+2)*calcsize('h')):
+            #    raise Exception('iq line size', "expected %d iq data size, but iq data contains %d" % (
+            #        (n_p*n_vol*nb_rx*2+2)*calcsize('h'), (size - (head_size+scalars_size+profile_size))))
+        else:
+            if (size - (head_size+scalars_size)) / (data_per_cell * 2) != n_vol * nb_rx:
+                raise Exception('volume number', "expected %d volumes, but profile data contains %d" % (
+                    n_vol, ((size - (head_size + scalars_size)) / (data_per_cell * 2 * nb_rx))))
 
 
     ###################
@@ -219,6 +228,29 @@ class ubt_raw_data () :
                 self.data_us_dicts[self.current_config][self.current_channel]["velocity_std_profile"]["data"].append(vectors_dict['std'])
 
 
+        if _iq:
+            offset += data_per_cell*n_vol*nb_rx*calcsize('h')
+
+            iq_profile = ar(unpack('%dh'%(n_p*n_vol*nb_rx*2 + 2), data[offset:offset+(n_p*n_vol*nb_rx*2+2)*calcsize('h')]))
+
+            channels = sorted(self.param_us_dicts[self.current_config].keys())
+            for channel_id in range(len(channels)):
+
+                iq_us_dict = {"i":[],"q":[]}
+                for ech in range(n_p):
+                    # on commence après le iq_hash --> 1+
+                    iq_us_dict["i"].append(iq_profile[1+2*channel_id + ech*n_vol*nb_rx*2:1+2*channel_id + (ech+1)*n_vol*nb_rx*2][::2*nb_rx])
+                    iq_us_dict["q"].append(iq_profile[2+2*channel_id + ech*n_vol*nb_rx*2:2+2*channel_id + (ech+1)*n_vol*nb_rx*2][::2*nb_rx])
+
+                iq_us_dict["i"] = ar(iq_us_dict["i"])
+                iq_us_dict["q"] = ar(iq_us_dict["q"])
+
+                if "iq" not in self.data_us_dicts[self.current_config][channel_id+1].keys():
+                    self.data_us_dicts[self.current_config][channel_id+1]["iq"] = {"time": [], "data": []}
+
+                self.data_us_dicts[self.current_config][channel_id+1]["iq"]["time"].append(time)
+                self.data_us_dicts[self.current_config][channel_id+1]["iq"]["data"].append(iq_us_dict)
+                
         # get the first channel again:
         #self.current_channel = list(self.param_us_dicts[self.current_config].keys())[0]
         

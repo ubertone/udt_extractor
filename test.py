@@ -6,7 +6,7 @@ from datetime import datetime  # pour time count
 from udt_extract.raw_extract import raw_extract
 
 # Path to raw.udt file to extract (from UB-Lab P, UB-SediFlow or UB-Lab 3C)
-path = "./raw_test_3C.udt" # "./raw_test.udt" # "./raw_test_3C.udt"
+path = "./raw_test_3C.udt" # "./raw_test.udt" # "./raw_test_3C.udt" "./raw_test_3C_IQ.udt"
 
 extract_start = datetime.now()
 # Extraction function:
@@ -41,8 +41,9 @@ print("\n================\nNon Ultrasound (US) measured/recorded data\n=========
 if data_dicts:
     print("Available non US datatypes: ", data_dicts.keys()) # gives the datatypes available for this recording
     first_datatype = list(data_dicts.keys())[0] # one of those datatypes
-    print("timestamp list for the first datatype %s: "%first_datatype, data_dicts[first_datatype]["time"]) # gives the list of timestamps associated to the list of values for this datatype
-    print("and corresponding data: ", data_dicts[first_datatype]["data"]) # gives the list of values associated to the list of timestamps for this datatype. The values cas be arrays.
+    #print("timestamp list for the first datatype %s: "%first_datatype, data_dicts[first_datatype]["time"]) # gives the list of timestamps associated to the list of values for this datatype
+    #print("and corresponding data: ", data_dicts[first_datatype]["data"]) # gives the list of values associated to the list of timestamps for this datatype. The values cas be arrays.
+    print ("first %s value: %.1f"%(first_datatype, data_dicts[first_datatype]["data"][0]))
 
 # data_us_dicts
 print("\n================\nUltrasound (US) measured/recorded data\n==================")
@@ -53,3 +54,7 @@ timestamp_first_US_datatype = data_us_dicts[first_configuration][first_channel][
 print("earliest available data: %s\nlastest available data: %s"%(min(timestamp_first_US_datatype),max(timestamp_first_US_datatype)))
 corresponding_US_data = data_us_dicts[first_configuration][first_channel][first_us_datatype]["data"] # gives the list of values associated to the list of timestamps for this datatype. The values cas be arrays.
 print(len(corresponding_US_data))
+
+if "iq" in data_us_dicts[first_configuration][first_channel].keys():
+    print("\n   - IQ data included :")
+    print(data_us_dicts[first_configuration][first_channel]['iq']['data'][0]['i']) 

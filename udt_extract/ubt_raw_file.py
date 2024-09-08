@@ -69,9 +69,9 @@ class ubt_raw_file:
 			data (bytes object): data in the chunk
 		"""
 		flag = unpack('h', self.__read_file__(calcsize('h')))[0]
-		size = unpack('h', self.__read_file__(calcsize('h')))[0]
-		# print "flag in read chunk %d"%flag
-		# print "size in read chunk %d"%size
+		size = unpack('H', self.__read_file__(calcsize('H')))[0]
+		#print ("flag in read chunk %d"%flag)
+		#print ("size in read chunk %d"%size)
 		if size:
 			data=self.__read_file__(size)
 		else :

@@ -12,8 +12,10 @@ from .ubt_raw_file import ubt_raw_file
 from .ubt_raw_data import ubt_raw_data
 from .ubt_raw_flag import *
 
+DEFAULT_MAX_SIZE= 50000000 # 50 MB
 
-def raw_extract(_raw_file):
+
+def raw_extract(_raw_file, _max_size=DEFAULT_MAX_SIZE):
     """
         This method will extract data from the raw.udt file and convert it to dicts which are easy to go through and to import in the DB.
 
@@ -37,11 +39,19 @@ def raw_extract(_raw_file):
 
     fileraw = ubt_raw_file(_raw_file)
 
-
+    total_size = 0
     profile_id = 0
     try:
         while 1:
             flag, size, data = fileraw.read_chunk()
+
+            total_size += size
+            if total_size > _max_size:
+                print ("           -----------          ")
+                print ("WARNING, file size is too big, process interupted. All data are not extracted")
+                print ("  (size threshold can be modified by setting _max_size argument)")
+                print ("           -----------          ")
+                break
 
             # Pour raw UDT005 (ie. UB-Lab P, UB-SediFlow, UB-Lab 3C) on peut 
             # rencontrer 4 flags: const, settings json, configs (HW), profils
@@ -81,13 +91,14 @@ def raw_extract(_raw_file):
                 ubt_data.set_confighw(size, data)
 
 
-            if flag == PROFILE_TAG or flag == PROFILE_INST_TAG:
-                timestamp = ubt_data.read_line(size, data, flag==PROFILE_INST_TAG)
+            if flag == PROFILE_TAG or flag == PROFILE_INST_TAG or flag == PROFILE_INST_IQ_TAG:
+                timestamp = ubt_data.read_line(size, data, (flag==PROFILE_INST_TAG or flag == PROFILE_INST_IQ_TAG), flag == PROFILE_INST_IQ_TAG)
                 profile_id += 1
 
                 # get the first timestamp of udt file for time_begin definition of the run:
                 if profile_id == 1:
                     time_begin = timestamp
+
 
     except KeyboardInterrupt:
         print("read interrupted by user")
