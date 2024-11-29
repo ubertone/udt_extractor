@@ -60,8 +60,8 @@
       "alter_ego":["instturbi"],
       "unit": "1/m"
     },
-    "temperature": {
-      "alter_ego":["temp"],
+    "temperature_env": {
+      "alter_ego":["temp", "temperature"],
       "unit": "K"
     },
     "sound_speed": {

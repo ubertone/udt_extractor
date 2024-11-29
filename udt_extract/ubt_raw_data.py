@@ -16,6 +16,7 @@ from peacock_uvp.apf_timestamp import decode_timestamp
 from .convert_type import translate_key
 from .date_parser import date_parse
 from .ubt_raw_config import paramus_rawdict2ormdict
+from .data_utils import conversion_scalar
 
 class ubt_raw_data () :
     def __init__ (self, _const):
@@ -48,6 +49,16 @@ class ubt_raw_data () :
 
         self.current_config = None
         self.current_channel = None
+        
+        try:
+            self.sensors_list = _const["hardware"]["sensors"]
+            #print(self.sensors_list)
+            for key in self.sensors_list:
+                new_key = translate_key(key)
+                self.data_dicts[new_key] = {"time":[], "data":[]}
+            #print(self.data_dicts.keys())
+        except:
+            print("No sensors available")
 
     def set_config (self, _settings):
 
@@ -240,31 +251,27 @@ class ubt_raw_data () :
                     self.data_us_dicts[self.current_config][channel][translated_key]["data"].append(value)
                     self.data_us_dicts[self.current_config][channel][translated_key]["time"].append(time)
 
-        self.conversion_scalar(scalars_dict)
-        # traduction des noms des types de données non US:
         for key, value in scalars_dict.items():
             translated_key = translate_key(key)
             if translated_key:
+                #print("sensors in header")
                 if translated_key not in self.data_dicts.keys():
                     self.data_dicts[translated_key] = {"time":[], "data":[]}
-                self.data_dicts[translated_key]["data"].append(value)
+                self.data_dicts[translated_key]["data"].append(conversion_scalar(value, translated_key))
                 self.data_dicts[translated_key]["time"].append(time)
 
         return time
 
-
-    def conversion_scalar(self, scalars_dict):
-        """Function that converts the scalar values from raw coded values to human readable and SI units.
-
-        Args:
-            scalars_dict (dict): dict of scalars keyed by datatype
-
-        Returns:
-            None
-        """
-        # convert temperature to Kelvin
-        scalars_dict["temp"] += 273.15
-
-        # convert angles to rad
-        scalars_dict['pitch'] *= np.pi/180.
-        scalars_dict['roll'] *= np.pi/180.
+    def read_sensors(self, data):
+        head_size = calcsize('hhh')
+        dt_timestamp, _ = decode_timestamp(data[0:head_size])
+        tmp_time = date_parse(dt_timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f"))
+        tmp_data = ar(unpack('%df'%(len(self.sensors_list)), data[head_size:head_size+len(self.sensors_list)*calcsize('f')]))
+        for i in range(len(self.sensors_list)):
+            new_key = translate_key(self.sensors_list[i])
+            #print(self.sensors_list[i], new_key)
+            self.data_dicts[new_key]["time"].append(tmp_time)
+            # convert to standard unit
+            #print(tmp_data[i])
+            #print(conversion_scalar(tmp_data[i], new_key))
+            self.data_dicts[new_key]["data"].append(conversion_scalar(tmp_data[i], new_key))

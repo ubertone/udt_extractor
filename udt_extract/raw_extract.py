@@ -39,6 +39,7 @@ def raw_extract(_raw_file):
 
 
     profile_id = 0
+    sensor_id = 0
     try:
         while 1:
             flag, size, data = fileraw.read_chunk()
@@ -88,6 +89,12 @@ def raw_extract(_raw_file):
                 # get the first timestamp of udt file for time_begin definition of the run:
                 if profile_id == 1:
                     time_begin = timestamp
+
+            if flag == SENSORS_TAG:
+                ubt_data.read_sensors(data)
+                sensor_id += 1
+                #print(sensor_id)
+		
 
     except KeyboardInterrupt:
         print("read interrupted by user")

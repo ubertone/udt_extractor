@@ -6,7 +6,7 @@ from datetime import datetime  # pour time count
 from udt_extract.raw_extract import raw_extract
 
 # Path to raw.udt file to extract (from UB-Lab P, UB-SediFlow or UB-Lab 3C)
-path = "./raw_test_3C.udt" # "./raw_test.udt" # "./raw_test_3C.udt"
+path = "./raw_test.udt" # "./raw_test.udt" # "./raw_test_3C.udt"
 
 extract_start = datetime.now()
 # Extraction function:
